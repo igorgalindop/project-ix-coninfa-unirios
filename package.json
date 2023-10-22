@@ -4,9 +4,13 @@
   "description": "Projeto criado para fins didáticos apresentado no minicurso do IX CONINFA - Congresso Interdisciplinar do UniRios",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts "
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.2.2"
+  }
 }
