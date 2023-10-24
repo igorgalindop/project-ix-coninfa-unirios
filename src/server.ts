@@ -1,4 +1,4 @@
-import express, { response } from 'express';
+import express, { NextFunction, Request, Response, response } from 'express';
 import { v4 as uuid } from 'uuid';
 
 const app = express();
@@ -13,6 +13,33 @@ interface ICourse {
 }
 
 const courses: ICourse[] = [];
+let access_token: string;
+
+// Middlewares
+function ensureAuthentication(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  const { authorization } = request.headers;
+
+  if (!authorization || authorization !== access_token) {
+    return response.status(401).json({ error: 'Not authorized!' });
+  }
+
+  next();
+}
+//----------
+
+app.get('/token', (request, response) => {
+  access_token = uuid();
+
+  return response.json({
+    access_token,
+  });
+});
+
+app.use(ensureAuthentication);
 
 app.post('/courses', (request, response) => {
   const { name, description } = request.body;
@@ -44,7 +71,7 @@ app.get('/courses', (request, response) => {
     courses: resultCourses,
   };
 
-  response.json(result);
+  return response.json(result);
 });
 
 app.get('/courses/:id', (request, response) => {
