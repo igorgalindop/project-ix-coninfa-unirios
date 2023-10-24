@@ -9,7 +9,7 @@ interface ICourse {
   id?: string;
   name: string;
   description: string;
-  activated: boolean;
+  active: boolean;
 }
 
 const courses: ICourse[] = [];
@@ -21,7 +21,7 @@ app.post('/courses', (request, response) => {
     id: uuid(),
     name,
     description,
-    activated: true,
+    active: true,
   };
 
   courses.push(course);
@@ -30,8 +30,18 @@ app.post('/courses', (request, response) => {
 });
 
 app.get('/courses', (request, response) => {
+  const { active } = request.query;
+
+  let resultCourses: ICourse[];
+
+  if (active !== 'true' && active !== 'false') {
+    resultCourses = courses;
+  } else {
+    resultCourses = courses.filter((c) => String(c.active) === active);
+  }
+
   const result = {
-    courses: courses,
+    courses: resultCourses,
   };
 
   response.json(result);
@@ -51,7 +61,7 @@ app.get('/courses/:id', (request, response) => {
 
 app.put('/courses/:id', (request, response) => {
   const { id } = request.params;
-  const { name, description, activated } = request.body;
+  const { name, description, active } = request.body;
 
   const course = courses.find((c) => c.id === id);
 
@@ -62,7 +72,7 @@ app.put('/courses/:id', (request, response) => {
   Object.assign(course, {
     name,
     description,
-    activated,
+    active,
   });
 
   return response.json(course);
