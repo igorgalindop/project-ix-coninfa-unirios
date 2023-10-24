@@ -1,6 +1,8 @@
-import express, { NextFunction, Request, Response, response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { v4 as uuid } from 'uuid';
 import { AppErorr } from './shared/infra/error/AppError';
+import { ensureAuthentication } from './shared/infra/http/middlewares/ensureAuthentication';
+import { errorMessage } from './shared/infra/http/middlewares/errorMessage';
 
 const app = express();
 
@@ -14,31 +16,6 @@ interface ICourse {
 }
 
 const courses: ICourse[] = [];
-let access_token: string;
-
-// Middlewares
-function ensureAuthentication(
-  request: Request,
-  response: Response,
-  next: NextFunction
-) {
-  const { authorization } = request.headers;
-
-  if (!authorization || authorization !== access_token) {
-    throw new AppErorr('Not authorized!', 401);
-  }
-
-  next();
-}
-//----------
-
-app.get('/token', (request, response) => {
-  access_token = uuid();
-
-  return response.json({
-    access_token,
-  });
-});
 
 app.use(ensureAuthentication);
 
@@ -120,19 +97,7 @@ app.delete('/courses/:id', (request, response) => {
   return response.status(204).send();
 });
 
-app.use(
-  (err: Error, request: Request, response: Response, next: NextFunction) => {
-    if (err instanceof AppErorr) {
-      return response
-        .status(err.statusCode)
-        .json({ status: 'error', message: err.message });
-    }
-
-    return response
-      .status(500)
-      .json({ status: 'error', message: 'Internal server error.' });
-  }
-);
+app.use(errorMessage);
 
 app.listen(3000, () => {
   console.log('Server is running!');
