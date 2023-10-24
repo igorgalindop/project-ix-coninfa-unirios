@@ -4,7 +4,7 @@
   "description": "Projeto criado para fins didáticos apresentado no minicurso do IX CONINFA - Congresso Interdisciplinar do UniRios",
   "main": "index.js",
   "scripts": {
-    "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts "
+    "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/shared/infra/http/server.ts "
   },
   "keywords": [],
   "author": "",

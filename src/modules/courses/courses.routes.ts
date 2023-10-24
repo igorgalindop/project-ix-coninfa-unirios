@@ -1,12 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express';
+import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
-import { AppErorr } from './shared/infra/error/AppError';
-import { ensureAuthentication } from './shared/infra/http/middlewares/ensureAuthentication';
-import { errorMessage } from './shared/infra/http/middlewares/errorMessage';
+import { AppErorr } from '../../shared/infra/error/AppError';
 
-const app = express();
-
-app.use(express.json());
+const coursesRoutes = Router();
+const courses: ICourse[] = [];
 
 interface ICourse {
   id?: string;
@@ -15,11 +12,7 @@ interface ICourse {
   active: boolean;
 }
 
-const courses: ICourse[] = [];
-
-app.use(ensureAuthentication);
-
-app.post('/courses', (request, response) => {
+coursesRoutes.post('/courses', (request, response) => {
   const { name, description } = request.body;
 
   const course: ICourse = {
@@ -34,7 +27,7 @@ app.post('/courses', (request, response) => {
   return response.status(201).json(course);
 });
 
-app.get('/courses', (request, response) => {
+coursesRoutes.get('/courses', (request, response) => {
   const { active } = request.query;
 
   let resultCourses: ICourse[];
@@ -52,7 +45,7 @@ app.get('/courses', (request, response) => {
   return response.json(result);
 });
 
-app.get('/courses/:id', (request, response) => {
+coursesRoutes.get('/courses/:id', (request, response) => {
   const { id } = request.params;
 
   const course = courses.find((c) => c.id === id);
@@ -64,7 +57,7 @@ app.get('/courses/:id', (request, response) => {
   return response.json(course);
 });
 
-app.put('/courses/:id', (request, response) => {
+coursesRoutes.put('/courses/:id', (request, response) => {
   const { id } = request.params;
   const { name, description, active } = request.body;
 
@@ -83,7 +76,7 @@ app.put('/courses/:id', (request, response) => {
   return response.json(course);
 });
 
-app.delete('/courses/:id', (request, response) => {
+coursesRoutes.delete('/courses/:id', (request, response) => {
   const { id } = request.params;
 
   const indexCourse = courses.findIndex((c) => c.id === id);
@@ -97,8 +90,4 @@ app.delete('/courses/:id', (request, response) => {
   return response.status(204).send();
 });
 
-app.use(errorMessage);
-
-app.listen(3000, () => {
-  console.log('Server is running!');
-});
+export { coursesRoutes };
