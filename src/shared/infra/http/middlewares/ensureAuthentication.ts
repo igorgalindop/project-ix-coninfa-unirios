@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppErorr } from '../../error/AppError';
+import { AppErorr } from '../../../error/AppError';
 
 export function ensureAuthentication(
   request: Request,

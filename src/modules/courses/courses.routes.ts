@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
-import { AppErorr } from '../../shared/infra/error/AppError';
+import { AppErorr } from '../../shared/error/AppError';
 
 const coursesRoutes = Router();
 const courses: ICourse[] = [];
