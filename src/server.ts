@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response, response } from 'express';
 import { v4 as uuid } from 'uuid';
+import { AppErorr } from './shared/infra/error/AppError';
 
 const app = express();
 
@@ -24,7 +25,7 @@ function ensureAuthentication(
   const { authorization } = request.headers;
 
   if (!authorization || authorization !== access_token) {
-    return response.status(401).json({ error: 'Not authorized!' });
+    throw new AppErorr('Not authorized!', 401);
   }
 
   next();
@@ -80,7 +81,7 @@ app.get('/courses/:id', (request, response) => {
   const course = courses.find((c) => c.id === id);
 
   if (!course) {
-    return response.status(404).json({ error: 'Course not found!' });
+    throw new AppErorr('Course not found!', 404);
   }
 
   return response.json(course);
@@ -93,7 +94,7 @@ app.put('/courses/:id', (request, response) => {
   const course = courses.find((c) => c.id === id);
 
   if (!course) {
-    return response.status(404).json({ error: 'Course not found!' });
+    throw new AppErorr('Course not found!', 404);
   }
 
   Object.assign(course, {
@@ -111,13 +112,27 @@ app.delete('/courses/:id', (request, response) => {
   const indexCourse = courses.findIndex((c) => c.id === id);
 
   if (indexCourse === -1) {
-    return response.status(404).json({ error: 'Course not found!' });
+    throw new AppErorr('Course not found!', 404);
   }
 
   courses.splice(indexCourse, 1);
 
   return response.status(204).send();
 });
+
+app.use(
+  (err: Error, request: Request, response: Response, next: NextFunction) => {
+    if (err instanceof AppErorr) {
+      return response
+        .status(err.statusCode)
+        .json({ status: 'error', message: err.message });
+    }
+
+    return response
+      .status(500)
+      .json({ status: 'error', message: 'Internal server error.' });
+  }
+);
 
 app.listen(3000, () => {
   console.log('Server is running!');
