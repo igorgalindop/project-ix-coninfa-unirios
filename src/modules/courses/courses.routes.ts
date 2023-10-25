@@ -9,4 +9,6 @@ coursesRoutes.post('/', coursesController.handleCreate);
 
 coursesRoutes.get('/', coursesController.handleListAll);
 
+coursesRoutes.get('/:id', coursesController.handleFindById);
+
 export { coursesRoutes };

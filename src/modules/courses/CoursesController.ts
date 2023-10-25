@@ -26,6 +26,19 @@ class CoursesController {
 
     return response.status(201).json(result);
   }
+
+  async handleFindById(
+    request: Request,
+    response: Response
+  ): Promise<Response> {
+    const { id } = request.params;
+
+    const coursesRepository = new CoursesRepository();
+
+    const course = await coursesRepository.findById(id);
+
+    return response.status(201).json(course);
+  }
 }
 
 export { CoursesController };

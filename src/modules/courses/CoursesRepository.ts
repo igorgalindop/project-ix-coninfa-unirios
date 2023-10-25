@@ -28,6 +28,19 @@ class CoursesRepository {
 
     return courses;
   }
+
+  async findById(id: string): Promise<Course | null> {
+    const course = await this.prisma.course.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        Student: true,
+      },
+    });
+
+    return course;
+  }
 }
 
 export { CoursesRepository };
