@@ -1,19 +1,32 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StudentsRepository } from './StudentsRepository';
+import { AppErorr } from '../../shared/error/AppError';
+import { Student } from '@prisma/client';
 
 class StudentsController {
-  async handleCreate(request: Request, response: Response): Promise<Response> {
+  async handleCreate(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response | undefined> {
     const { name, age, courseId } = request.body;
 
     const studentsRepository = new StudentsRepository();
 
-    const student = await studentsRepository.create({
-      name,
-      age,
-      courseId,
-    });
+    let student: Student;
 
-    return response.status(201).json(student);
+    try {
+      student = await studentsRepository.create({
+        name,
+        age,
+        courseId,
+      });
+
+      return response.status(201).json(student);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
   }
 
   async handleListAll(request: Request, response: Response): Promise<Response> {

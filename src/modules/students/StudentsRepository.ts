@@ -1,4 +1,5 @@
 import { PrismaClient, Student } from '@prisma/client';
+import { AppErorr } from '../../shared/error/AppError';
 
 interface ICreateStudentDTO {
   name: string;
@@ -17,6 +18,10 @@ class StudentsRepository {
   constructor(private prisma = new PrismaClient()) {}
 
   async create({ name, age, courseId }: ICreateStudentDTO): Promise<Student> {
+    if (!name) {
+      throw new AppErorr('Name is required');
+    }
+
     const student = await this.prisma.student.create({
       data: {
         name,
