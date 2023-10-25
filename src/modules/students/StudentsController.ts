@@ -53,6 +53,19 @@ class StudentsController {
 
     return response.status(200).json(student);
   }
+
+  async handleFindById(
+    request: Request,
+    response: Response
+  ): Promise<Response> {
+    const { id } = request.params;
+
+    const studentsRepository = new StudentsRepository();
+
+    const student = await studentsRepository.findById(id);
+
+    return response.status(200).json(student);
+  }
 }
 
 export { StudentsController };

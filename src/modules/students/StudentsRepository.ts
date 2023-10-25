@@ -61,6 +61,19 @@ class StudentsRepository {
 
     return student;
   }
+
+  async findById(id: string): Promise<Student | null> {
+    const student = await this.prisma.student.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        course: true,
+      },
+    });
+
+    return student;
+  }
 }
 
 export { StudentsRepository };
