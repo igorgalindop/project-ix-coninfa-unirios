@@ -59,10 +59,21 @@ Para executar este projeto em sua própria máquina, siga os passos abaixo:
    npm install
    ```
 3. **Configuração do Banco de Dados**
+
    Renomeie o arquivo `.env.example` para `.env`
-4. **Executar o Serviço**
+
+4. **Executar migrations do Banco de Dados**
+   ```bash
+   npx prisma migrate deploy
+   ```
+5. **Gerar código com base no schema.prisma**
+   ```bash
+   npx prisma generate
+   ```
+6. **Executar o Serviço**
    ```bash
    npm run start
    ```
-5. **Acessar a API**
+7. **Acessar a API**
+
    A API estará disponível em `http://localhost:3000`
